@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/stylesheets/design.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
+
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <h1 class="customSearch">Search Result <span style="color: grey;"> > </span><%= searchQuery %></h1>
+    <% data["results"].forEach((movie)=>{ %>
+    <div class="card custom mb-5 w-75" data-toggle="modal" data-target="#exampleModalCenter"
+        data-id="<%=movie['id'] %>">
+        <div class="row no-gutters">
+            <div class="col-4">
+                <div class="inner">
+                    <%if(movie['poster_path'] == null) { %>
+                    <img src="
+                    https://2.bp.blogspot.com/-RNvC560pQvc/VOiKCX7xzCI/AAAAAAAAG5w/pUHBiHn_ak0/s1600/tanpagambar.png"
+                        class="card-img img-fluid" alt="">
+                    <% } else { %>
+                    <img src='https://image.tmdb.org/t/p/w600_and_h900_bestv2/<%=movie["poster_path"] %>'
+                        alt=" no image" class="card-img img-fluid">
+                    <% } %>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card-body">
+                    <h2 src="" class="card-title"><%= movie["original_title"] %></h2>
+                    <hr>
+                    <p class="card-text"><%= movie["overview"] %></p>
+                    <hr>
+                    <p class="card-text">Date published : <b><%= movie["release_date"] %></b></p>
+                    <p class="card-text">Total Votes : <b><%= movie["vote_count"] %></b></p>
+                    <p class="card-text">Average Ratings : <b><%= movie["vote_average"] %></b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="containerMovie"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <script>
+        const card = document.querySelectorAll('.card');
+        card.forEach(movie => movie.addEventListener('click', async function () {
+            var idMovie = this.dataset.id;
+            let cards = '';
+
+            console.log(idMovie);
+            var detailMov = await fetch('https://api.themoviedb.org/3/movie/' + idMovie +
+                    '?api_key=a084c992a81be9f171bba84163b45be3')
+                .then(result => result.json())
+                .then(coba => {
+                    cards += `
+                        <div class="card">
+                            <img class="card-img-top" style="height:400px" src='${coba['poster_path'] == null ? "https://2.bp.blogspot.com/-RNvC560pQvc/VOiKCX7xzCI/AAAAAAAAG5w/pUHBiHn_ak0/s1600/tanpagambar.png" : "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + coba['poster_path']}' alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">${coba['original_title']}</h5>
+                                <p class="card-text">${coba['overview']}</p>
+                            </div>
+                    </div>`;
+                    return cards;
+                });
+            // detailMov.forEach(m => {
+            //     console.log(m);
+            // });
+
+
+            let body = document.querySelector('.containerMovie');
+            body.innerHTML = cards;
+        }));
+    </script>
+
+</body>
+
+</html>
